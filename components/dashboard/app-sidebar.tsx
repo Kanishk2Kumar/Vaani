@@ -35,20 +35,20 @@ const data = {
       items: [
         {
           title: "Assistants",
-          url: "#",
+          url: "/dashboard/assistants",
           isActive: true,
         },
         {
           title: "Workflows",
-          url: "#",
+          url: "/dashboard/workflows",
         },
         {
           title: "Files",
-          url: "#",
+          url: "/dashboard/files",
         },
         {
           title: "Tools",
-          url: "#",
+          url: "/dashboard/tools",
         },
       ],
     },
@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   height={28}
                 />
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Documentation</span>
+                  <span className="font-semibold">Dashboard</span>
                 </div>
               </a>
             </SidebarMenuButton>
