@@ -36,7 +36,7 @@ export function FooterButtons() {
   return (
     <>
       <Link
-        href="https://github.com/sponsors/m3hu1"
+        href="https://github.com/Kanishk2Kumar"
         target="_blank"
         className={buttonVariants({ variant: "outline" })}
       >

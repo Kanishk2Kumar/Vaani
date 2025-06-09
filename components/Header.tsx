@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 const Header = () => {
   return (
-    <header className="fixed top-0 left-0 w-full z-50 font-mono border-b backdrop-blur-sm">
+    <header className="fixed top-0 left-0 w-full z-50 font-mono">
       <div className="mx-16 py-2 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image src="/icons/logo.png" alt="Logo" width={140} height={55} />
@@ -30,7 +30,9 @@ const Header = () => {
           <ModeToggle />
 
           <Link href="/dashboard">
-            <Button className="ml-2 text-md">OPEN DASHBOARD</Button>
+            <Button className="px-5 py-4 text-lg flex items-center bg-blue-800 hover:bg-blue-900 text-white ">
+            Open Dashboard 
+          </Button>
           </Link>
         </nav>
       </div>
