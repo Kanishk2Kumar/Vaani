@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { supabase } from "@/lib/utils/client";
+import supabase  from "@/lib/client";
 import { useRouter } from "next/navigation";
 
 export function LoginForm({
@@ -41,24 +41,13 @@ export function LoginForm({
         .eq("userid", userId)
         .single();
 
-      if (data?.userType === "User") {
+      if (data) {
         router.replace("/");
         return;
       }
 
       if(data?.userType === "ADMIN"){
         router.replace("/admin/dashboard");
-        return;
-      }
-
-      ({ data, error } = await supabase
-        .from("provider")
-        .select("*")
-        .eq("providerid", userId)
-        .single());
-
-      if (data) {
-        router.replace("/shopkeeper");
         return;
       }
 
@@ -121,13 +110,9 @@ export function LoginForm({
         </div>
       </div>
       <div className="text-center text-sm">
-        Don&apos;t have an account? Sign up as{" "}
-        <a href="/sign-up-User" className="underline underline-offset-4">
-          User
-        </a>{" "}
-        or{" "}
-        <a href="/sign-up-Provider" className="underline underline-offset-4">
-          Provider
+        Don&apos;t have an account? {" "}
+        <a href="/sign-up" className="underline underline-offset-4">
+          Sign up
         </a>
       </div>
     </form>

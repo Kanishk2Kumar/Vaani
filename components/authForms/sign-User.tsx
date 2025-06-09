@@ -11,40 +11,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { supabase } from "@/lib/utils/client";
+import supabase from "@/lib/client";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export function SignInUserForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [location, setLocation] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    gender: "",
     phone: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const fetchLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const loc = `Lat: ${position.coords.latitude}, Lng: ${position.coords.longitude}`;
-          setLocation(loc);
-        },
-        (error) => {
-          console.error("Error fetching location:", error);
-          setLocation("Unable to fetch location");
-        }
-      );
-    } else {
-      setLocation("Geolocation is not supported by this browser.");
-    }
-  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -71,7 +54,6 @@ export function SignInUserForm({
       userid: data.user?.id,
       name: formData.name,
       email: formData.email,
-      gender: formData.gender,
       phoneNumber: formData.phone,
     });
 
@@ -81,19 +63,19 @@ export function SignInUserForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="max-w-6xl mx-auto p-1 shadow-lg">
+      <Card className="max-w-6xl mx-auto p-1 shadow-lg w-96">
         <CardHeader className="text-center">
           <CardTitle className="text-xl font-ibm-plex-sans">
             Welcome Abroad
           </CardTitle>
           <CardDescription>
-            Create an Account to Create Campaigns and Donate
+            Create an Account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <div className="grid gap-6 grid-cols-2">
-              <div className="grid gap-2">
+            <div className="gap-6">
+              <div className="gap-2 py-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
@@ -103,7 +85,7 @@ export function SignInUserForm({
                   onChange={handleChange}
                 />
               </div>
-              <div className="grid gap-2">
+              <div className="gap-2 py-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -113,30 +95,27 @@ export function SignInUserForm({
                   onChange={handleChange}
                 />
               </div>
-              <div className="grid gap-2">
+              <div className="relative gap-2 py-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   onChange={handleChange}
+                  className="pr-10"
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="gender">Gender</Label>
-                <select
-                  id="gender"
-                  className="border rounded-md p-2"
-                  required
-                  onChange={handleChange}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-10 text-muted-foreground hover:text-primary"
+                  tabIndex={-1}
+                  aria-label="Toggle password visibility"
                 >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-              <div className="grid gap-2 col-span-2">
+
+              <div className="gap-2 col-span-2 py-2">
                 <Label htmlFor="phone">Phone Number</Label>
                 <Input
                   id="phone"
@@ -146,20 +125,7 @@ export function SignInUserForm({
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-span-2 grid gap-2">
-                <Label>Location</Label>
-                <Button
-                  type="button"
-                  onClick={fetchLocation}
-                  className="w-full"
-                >
-                  Fetch Current Location
-                </Button>
-                {location && (
-                  <p className="text-sm text-gray-600">{location}</p>
-                )}
-              </div>
-              <div className="col-span-2">
+              <div className="col-span-2 py-2">
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Signing Up..." : "Sign Up"}
                 </Button>
