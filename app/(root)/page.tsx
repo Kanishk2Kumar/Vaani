@@ -10,7 +10,7 @@ export default function Home() {
     <div className="relative">
       <Header />
       <div className="hero-section relative flex sm:min-h-[92vh] min-h-[85vh] flex-col items-center justify-center text-center px-2 py-8">
-      <AnimatedGridPattern
+        <AnimatedGridPattern
           numSquares={30}
           maxOpacity={0.1}
           duration={3}
@@ -29,9 +29,7 @@ export default function Home() {
           />
         </Link>
         <h1 className="text-3xl font-bold mb-4 sm:text-6xl pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-transparent dark:from-white dark:to-slate-900/10 pb-2">
-          <span className="block sm:hidden">
-            Block Forge
-          </span>
+          <span className="block sm:hidden">Block Forge</span>
           <span className="hidden sm:block">
             Voice AI agents for developers
           </span>
@@ -41,23 +39,29 @@ export default function Home() {
           <div className="bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[2px] w-1/4 mt-[-2px] animate-pulse" />
         </div>
         <p className="text-gray-400 text-lg text-center z-10">
-          A Voice-First Conversational AI Assistant that feels natural, informative and customizable <br />
-           It is designed to facilitate natural, informative, and customizable interactions.
+          A Voice-First Conversational AI Assistant that feels natural,
+          informative and customizable <br />
+          It is designed to facilitate natural, informative, and customizable
+          interactions.
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-6 z-10 ">
           <Link href="/sign-in">
-          <Button className="px-5 py-5 text-lg flex items-center bg-blue-800 hover:bg-blue-900 text-white ">
-            Sign Up <ArrowRight className="ml-1" />
-          </Button>
+            <Button className="px-5 py-5 text-lg flex items-center bg-blue-800 hover:bg-blue-900 text-white ">
+              Sign Up <ArrowRight className="ml-1" />
+            </Button>
           </Link>
+          
           <Link href="/docs">
-          <Button variant="outline" className="px-5 py-5 text-lg border-blue-800">
-            Documentation
-          </Button>
+            <Button
+              variant="outline"
+              className="px-5 py-5 text-lg border-blue-800"
+            >
+              Documentation
+            </Button>
           </Link>
         </div>
-    </div>
-    <Footer />
+      </div>
+      <Footer />
     </div>
   );
 }
