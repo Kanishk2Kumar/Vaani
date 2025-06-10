@@ -1,13 +1,14 @@
 import { LoginForm } from "@/components/authForms/login-form";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <h1 className="font-cormorant-garamond text-4xl">SAHAY</h1>
-          </a>
+          <div className="flex items-center gap-2 font-medium">
+            <Image src="/icons/logo.png" alt="Logo" width={140} height={55} />
+          </div>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">

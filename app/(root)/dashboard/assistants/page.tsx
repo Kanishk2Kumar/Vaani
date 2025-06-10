@@ -30,11 +30,7 @@ export default function Component() {
   const [activeTab, setActiveTab] = useState("Model");
   const [isSystemPromptExpanded, setIsSystemPromptExpanded] = useState(true);
 
-  const tabs = [
-    "Model",
-    "Voice",
-    "Tools",
-  ];
+  const tabs = ["Model", "Voice", "Tools"];
 
   return (
     <div className="flex h-screen">
@@ -109,18 +105,17 @@ export default function Component() {
         <div className="border-b">
           <div className="flex">
             {tabs.map((tab) => (
-              <Link href={`#${tab.toLowerCase()}`}>
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === tab
-                    ? "border-blue-500 text-blue-400"
-                    : "border-transparent"
-                }`}
-              >
-                {tab}
-              </button>
+              <Link href={`#${tab.toLowerCase()}`} key={tab}>
+                <button
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === tab
+                      ? "border-blue-500 text-blue-400"
+                      : "border-transparent"
+                  }`}
+                >
+                  {tab}
+                </button>
               </Link>
             ))}
           </div>
@@ -236,7 +231,7 @@ You are Riley, an appointment scheduling voice assistant for Wellness Partners, 
 - Project a helpful and patient demeanor, especially with elderly or confused callers
 - Maintain a warm but professional tone throughout the conversation`}
                       className="   min-h-[300px] pr-10"
-                      readOnly={!isSystemPromptExpanded}
+                      readOnly
                     />
                     <Button
                       size="icon"
@@ -314,24 +309,24 @@ You are Riley, an appointment scheduling voice assistant for Wellness Partners, 
               </div>
 
               <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Select Tools
-                    </label>
-                    <Select defaultValue="openai">
-                      <SelectTrigger className=" ">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className=" ">
-                        <SelectItem value="openai">
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 bg-primary-foreground rounded"></div>
-                            Tool 1
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Select Tools
+                  </label>
+                  <Select defaultValue="openai">
+                    <SelectTrigger className=" ">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className=" ">
+                      <SelectItem value="openai">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 bg-primary-foreground rounded"></div>
+                          Tool 1
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardContent>
           </Card>
