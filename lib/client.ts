@@ -1,8 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js'
+import config from './config'
 
-const supabaseUrl = 'https://xcnigjohlmsohjovsdsl.supabase.co'
-const supabaseKey = "Enter your key"
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(config.supabaseUrl, config.supabaseKey)
 
 export default supabase;

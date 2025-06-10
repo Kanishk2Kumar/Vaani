@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import supabase  from "@/lib/client";
+import supabase from "@/lib/client";
 import { useRouter } from "next/navigation";
 
 export function LoginForm({
@@ -46,7 +46,7 @@ export function LoginForm({
         return;
       }
 
-      if(data?.userType === "ADMIN"){
+      if (data?.userType === "ADMIN") {
         router.replace("/admin/dashboard");
         return;
       }
@@ -110,7 +110,7 @@ export function LoginForm({
         </div>
       </div>
       <div className="text-center text-sm">
-        Don&apos;t have an account? {" "}
+        Don&apos;t have an account?{" "}
         <a href="/sign-up" className="underline underline-offset-4">
           Sign up
         </a>

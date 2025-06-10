@@ -22,14 +22,23 @@ const AeonikTRIAL = localFont({
 });
 const AntipastoPro = localFont({
   src: [
-    { path: './fonts/AntipastoPro-Light_trial.ttf', weight: '100', style: 'normal' },
-    { path: '/fonts/AntipastoPro-Light_trial.ttf', weight: '200', style: 'normal' },
+    {
+      path: "./fonts/AntipastoPro-Light_trial.ttf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "/fonts/AntipastoPro-Light_trial.ttf",
+      weight: "200",
+      style: "normal",
+    },
   ],
-})
+});
 
 export const metadata: Metadata = {
   title: "Vaani",
-  description: " A Voice-First Conversational AI Assistant that feels natural, informative and customizable",
+  description:
+    " A Voice-First Conversational AI Assistant that feels natural, informative and customizable",
 };
 
 export default function RootLayout({
@@ -40,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistMono.variable} ${AeonikTRIAL.className} ${geistSans.variable} antialiased` }
+        className={`${geistMono.variable} ${AeonikTRIAL.className} ${geistSans.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

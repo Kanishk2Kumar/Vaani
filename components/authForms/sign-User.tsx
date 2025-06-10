@@ -68,9 +68,7 @@ export function SignInUserForm({
           <CardTitle className="text-xl font-ibm-plex-sans">
             Welcome Abroad
           </CardTitle>
-          <CardDescription>
-            Create an Account
-          </CardDescription>
+          <CardDescription>Create an Account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
