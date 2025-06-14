@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import Image from "next/image";
 
@@ -121,9 +121,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
+      <SidebarFooter>{user ? <NavUser user={user} /> : null}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
