@@ -45,10 +45,6 @@ const data = {
           url: "/dashboard/workflows",
         },
         {
-          title: "Files",
-          url: "/dashboard/files",
-        },
-        {
           title: "Tools",
           url: "/dashboard/tools",
         },
@@ -122,7 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        {user ? <NavUser user={user}  /> : null}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
