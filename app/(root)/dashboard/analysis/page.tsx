@@ -1,6 +1,5 @@
 "use client";
 
-// ── NEW IMPORTS ───────────────────────────────────────────
 import {
   Table,
   TableHeader,
@@ -9,31 +8,20 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-// ──────────────────────────────────────────────────────────
-
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import supabase from "@/lib/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function AssistantPage() {
-  /* ───────────────────────────────
-     State
-  ─────────────────────────────── */
   const [assistants, setAssistants] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedAssistant, setSelectedAssistant] = useState<string | null>(null);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // form fields
   const [name, setName] = useState("");
@@ -42,9 +30,8 @@ export default function AssistantPage() {
   const [description, setDescription] = useState("");
   const { user } = useAuth();
 
-  /* ───────────────────────────────
-     Fetch existing assistants
-  ─────────────────────────────── */
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
   useEffect(() => {
     const fetchAssistants = async () => {
       if (!user?.userid) return;
@@ -60,47 +47,57 @@ export default function AssistantPage() {
     fetchAssistants();
   }, [user]);
 
-  /* ───────────────────────────────
-     Create Assistant
-  ─────────────────────────────── */
-  const handleSave = async () => {
-    if (!name) {
-      alert("Give your assistant a name 🤖");
-      return;
+  useEffect(() => {
+    if (selectedAssistant) {
+      fetchSessions(selectedAssistant);
     }
+  }, [selectedAssistant]);
 
-    const payload = {
-      name,
-      trigger_type: triggerType,
-      action_type: actionType,
-      description,
-      user_id: user.userid,
-    };
+  const fetchSessions = async (assistantId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Get unique sessions with their creation time
+      const { data: sessionsData, error } = await supabase
+        .from("chat_history")
+        .select("session_id, created_at")
+        .eq("assistant_id", assistantId)
+        .order("created_at", { ascending: false })
+        .limit(10);
 
-    const { error } = await supabase.from("assistants").insert([payload]);
+      if (error) throw error;
 
-    if (error) {
-      console.error("❌ Could not save assistant:", error.message);
-      alert("Failed to save assistant");
-    } else {
-      alert("Assistant saved!");
-      resetForm();
+      if (!sessionsData || sessionsData.length === 0) {
+        setSessions([]);
+        return;
+      }
+
+      // Fetch sentiment for each session and add unique key
+      const sessionPromises = sessionsData.map(async (session) => {
+        const response = await fetch(
+          `${API_BASE_URL}/sentiment/${assistantId}/${session.session_id}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch sentiment");
+        const sentimentData = await response.json();
+        return {
+          ...sentimentData,
+          // Create unique key combining session ID and timestamp
+          uniqueKey: `${session.session_id}-${new Date(session.created_at).getTime()}`
+        };
+      });
+
+      const sessionsWithSentiment = await Promise.all(sessionPromises);
+      setSessions(sessionsWithSentiment);
+    } catch (err) {
+      console.error("Error fetching sessions:", err);
+      setError("Failed to load session data");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const resetForm = () => {
-    setShowCreateForm(false);
-    setName("");
-    setTriggerType("webhook");
-    setActionType("call_assistant");
-    setDescription("");
-  };
-
-  /* ───────────────────────────────
-     Click existing assistant
-  ─────────────────────────────── */
   const handleAssistantClick = (assistant: any) => {
-    setShowCreateForm(true);
+    setSelectedAssistant(assistant.assistant_id);
     setName(assistant.name);
     setTriggerType(assistant.trigger_type);
     setActionType(assistant.action_type);
@@ -111,9 +108,22 @@ export default function AssistantPage() {
     a.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  /* ───────────────────────────────
-     UI
-  ─────────────────────────────── */
+  const getSentimentColor = (sentiment: string) => {
+    const lowerSentiment = sentiment.toLowerCase();
+    switch (lowerSentiment) {
+      case "good":
+        return "bg-green-100 text-green-800";
+      case "moderate":
+        return "bg-yellow-200 text-yellow-800";
+      case "dissapointed":
+        return "bg-red-100 text-red-800";
+      case "mixed":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -122,10 +132,6 @@ export default function AssistantPage() {
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <span className="font-medium">Assistants</span>
-            <Button size="sm" onClick={() => setShowCreateForm(true)}>
-              <Plus className="h-4 w-4 mr-1" />
-              New
-            </Button>
           </div>
         </div>
 
@@ -146,8 +152,12 @@ export default function AssistantPage() {
         <div className="flex-1 p-4 overflow-auto">
           {filteredAssistants.map((a) => (
             <div
-              key={a.id}
-              className="bg-muted rounded-lg p-3 border mb-2 cursor-pointer"
+              key={a.assistant_id}
+              className={`rounded-lg p-3 border mb-2 cursor-pointer ${
+                selectedAssistant === a.assistant_id
+                  ? "bg-primary/10 border-primary"
+                  : "bg-muted"
+              }`}
               onClick={() => handleAssistantClick(a)}
             >
               <div className="font-medium">{a.name}</div>
@@ -156,72 +166,63 @@ export default function AssistantPage() {
         </div>
       </div>
 
-      {/* Main – Session Wise Analysis */}
       <div className="flex-1 p-6 overflow-auto">
         <Card>
           <CardContent className="p-6">
             <h2 className="text-xl font-semibold mb-4">
-              Session Wise Analysis
+              Session Sentiment Analysis
             </h2>
 
-            <div className="overflow-x-auto">
-              <Table className="min-w-full text-sm">
-                <TableHeader>
-                  <TableRow className="bg-muted/40">
-                    <TableHead className="w-32">Session ID</TableHead>
-                    <TableHead className="w-40">Analysis</TableHead>
-                    <TableHead>Feedback</TableHead>
-                  </TableRow>
-                </TableHeader>
+            {loading && <div className="text-center py-4">Loading sessions...</div>}
+            {error && (
+              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                {error}
+              </div>
+            )}
 
-                <TableBody>
-                  {[
-                    {
-                      id: "S-001",
-                      analysis: "good",
-                      feedback: "Great clarity throughout.",
-                    },
-                    {
-                      id: "S-002",
-                      analysis: "moderate",
-                      feedback: "Some pauses detected.",
-                    },
-                    {
-                      id: "S-003",
-                      analysis: "disappointed",
-                      feedback: "Frequent off‑topic responses.",
-                    },
-                    {
-                      id: "S-004",
-                      analysis: "bad",
-                      feedback: "User abandoned the session.",
-                    },
-                  ].map((row) => (
-                    <TableRow key={row.id} className="border-b last:border-0">
-                      <TableCell className="font-medium">{row.id}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`inline-block rounded-full px-3 py-1 capitalize font-medium ${
-                            row.analysis === "good"
-                              ? "bg-green-100 text-green-800"
-                              : row.analysis === "moderate"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : row.analysis === "disappointed"
-                              ? "bg-pink-100 text-pink-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {row.analysis}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {row.feedback}
-                      </TableCell>
+            {!loading && sessions.length === 0 && (
+              <div className="text-center text-gray-500 py-4">
+                {selectedAssistant
+                  ? "No session data available for this assistant"
+                  : "Select an assistant to view session analysis"}
+              </div>
+            )}
+
+            {sessions.length > 0 && (
+              <div className="overflow-x-auto">
+                <Table className="min-w-full text-sm">
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="w-32">Session ID</TableHead>
+                      <TableHead className="w-40">Sentiment</TableHead>
+                      <TableHead>Messages</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+
+                  <TableBody>
+                    {sessions.map((session) => (
+                      <TableRow key={session.uniqueKey} className="border-b last:border-0">
+                        <TableCell className="font-medium">
+                          {session.session_id}
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-block rounded-full px-3 py-1 capitalize font-medium ${getSentimentColor(
+                              session.sentiment
+                            )}`}
+                          >
+                            {session.sentiment}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {session.message_count} messages
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
