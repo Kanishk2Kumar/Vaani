@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,319 +19,349 @@ import {
   MessageCircle,
   Phone,
   MoreHorizontal,
-  ChevronUp,
-  Sparkles,
-  Maximize2,
-  HelpCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { FileUpload } from "@/components/ui/file-upload";
+import supabase from "@/lib/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Component() {
+  const [files, setFiles] = useState<File[]>([]);
+  const [Filelink, setFilelink] = useState<string>("");
   const [activeTab, setActiveTab] = useState("Model");
-  const [isSystemPromptExpanded, setIsSystemPromptExpanded] = useState(true);
+  const [assistants, setAssistants] = useState<any>([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const [name, setName] = useState("");
+  const [provider, setProvider] = useState("openai");
+  const [model, setModel] = useState("gpt4o");
+  const [voiceProvider, setVoiceProvider] = useState("deepgram");
+  const [voiceModel, setVoiceModel] = useState("asteria");
+  const [firstMessage, setFirstMessage] = useState("");
+  const [systemPrompt, setSystemPrompt] = useState("");
+
+  const { user } = useAuth();
 
   const tabs = ["Model", "Voice", "Tools"];
 
+  useEffect(() => {
+    const fetchAssistants = async () => {
+      if (!user?.userid) return;
+      const { data, error } = await supabase
+        .from("assistants")
+        .select("*")
+        .eq("user_id", user.userid);
+
+      if (!error && data) setAssistants(data);
+    };
+
+    fetchAssistants();
+  }, [user]);
+
+  const handleFileUpload = async (selectedFiles: File[]) => {
+    setFiles(selectedFiles);
+
+    for (const file of selectedFiles) {
+      const filename = `uploads/${Date.now()}-${file.name}`;
+
+      const { error } = await supabase.storage
+        .from("assistant-files")
+        .upload(filename, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) {
+        console.error("Upload error:", error.message);
+      } else {
+        const { data: fileUrl } = supabase.storage
+          .from("assistant-files")
+          .getPublicUrl(filename);
+
+        if (fileUrl?.publicUrl) setFilelink(fileUrl.publicUrl);
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!name || !firstMessage || !systemPrompt) {
+      alert("Please fill all required fields.");
+      return;
+    }
+
+    const { error } = await supabase.from("assistants").insert([
+      {
+        name,
+        provider,
+        model,
+        user_id: user.userid,
+        voice_provider: voiceProvider,
+        voice_model: voiceModel,
+        first_message: firstMessage,
+        system_prompt: systemPrompt,
+        file_url: Filelink,
+      },
+    ]);
+
+    if (error) {
+      console.error("❌ Error uploading assistant:", error.message);
+      alert("Failed to upload assistant.");
+    } else {
+      alert("Assistant uploaded successfully!");
+      setShowCreateForm(false);
+      setName("");
+      setModel("gpt4o");
+      setProvider("openai");
+      setVoiceProvider("deepgram");
+      setVoiceModel("asteria");
+      setFirstMessage("");
+      setSystemPrompt("");
+      setFilelink("");
+    }
+  };
+
+  const handleAssistantClick = (assistant: any) => {
+    setShowCreateForm(true);
+    setName(assistant.name);
+    setProvider(assistant.provider);
+    setModel(assistant.model);
+    setVoiceProvider(assistant.voice_provider);
+    setVoiceModel(assistant.voice_model);
+    setFirstMessage(assistant.first_message);
+    setSystemPrompt(assistant.system_prompt);
+    setFilelink(assistant.file_url);
+  };
+
   return (
     <div className="flex h-screen">
-      <div className="w-72  border-r flex flex-col">
-        {/* Header */}
+      <div className="w-72 border-r flex flex-col">
         <div className="p-4 border-b">
           <div className="flex items-center gap-2 mb-4">
             <span className="font-medium">Assistants</span>
-            <div className="ml-auto flex items-center gap-2">
-              <div className="w-5 h-5  rounded"></div>
-              <span className="text-sm">Docs</span>
-            </div>
           </div>
-
-          <Button className="w-full   ">
+          <Button
+            className="w-full"
+            onClick={() => {
+              setName("");
+              setProvider("openai");
+              setModel("gpt4o");
+              setVoiceProvider("deepgram");
+              setVoiceModel("asteria");
+              setFirstMessage("");
+              setSystemPrompt("");
+              setFilelink("");
+              setFiles([]);
+              setShowCreateForm(true);
+            }}
+          >
             <Plus className="w-4 h-4" />
             Create Assistant
           </Button>
         </div>
 
-        {/* Search */}
         <div className="p-4">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 " />
-            <Input placeholder="Search Assistants" className="pl-10 " />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" />
+            <Input placeholder="Search Assistants" className="pl-10" />
           </div>
         </div>
 
-        {/* Assistant List */}
-        <div className="flex-1 p-4">
-          <div className="bg-blue-600 rounded-lg p-3 border-l-4 ">
-            <div className="font-medium">Sarvad</div>
-          </div>
+        <div className="flex-1 p-4 overflow-auto">
+          {assistants.map((assistant: any) => (
+            <div
+              key={assistant.id}
+              className="bg-muted rounded-lg p-3 border mb-2 cursor-pointer"
+              onClick={() => handleAssistantClick(assistant)}
+            >
+              <div className="font-medium">{assistant.name}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="border-b p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold">Sarvad</h1>
-              <span className="text-sm ">7a06b762-ada5-47c0-bc37...</span>
-              <div className="flex gap-2">
-                <div className="w-4 h-4  rounded"></div>
-                <div className="w-4 h-4  rounded"></div>
+      {showCreateForm && (
+        <div className="flex-1 flex flex-col">
+          <div className="border-b p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h1 className="text-2xl font-bold">
+                  {name || "New Assistant"}
+                </h1>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <Button variant="outline" className="border-blue-600 ">
-                <Play className="w-4 h-4 mr-2" />
-                Test
-              </Button>
-              <Button variant="outline" className="border-blue-600 ">
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Chat
-              </Button>
-              <Button className=" ">
-                <Phone className="w-4 h-4 mr-2" />
-                Talk to Assistant
-              </Button>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="border-b">
-          <div className="flex">
-            {tabs.map((tab) => (
-              <Link href={`#${tab.toLowerCase()}`} key={tab}>
-                <button
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === tab
-                      ? "border-blue-500 text-blue-400"
-                      : "border-transparent"
-                  }`}
+              <div className="flex items-center gap-2">
+                <Button onClick={handleSubmit}>Save Assistant</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCreateForm(false)}
                 >
-                  {tab}
-                </button>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 p-6 overflow-auto">
-          <Card id="model">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Model</h2>
-                  <p className="text-blue-400">
-                    Configure the behavior of the assistant.
-                  </p>
-                </div>
-                <ChevronUp className="w-5 h-5 " />
+                  Cancel
+                </Button>
               </div>
+            </div>
+          </div>
 
-              <div className="space-y-6">
-                {/* Provider and Model */}
+          <div className="border-b">
+            <div className="flex">
+              {tabs.map((tab) => (
+                <Link href={`#${tab.toLowerCase()}`} key={tab}>
+                  <button
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                      activeTab === tab
+                        ? "border-blue-500 text-blue-400"
+                        : "border-transparent"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex-1 p-6 overflow-auto">
+            <Card id="model">
+              <CardContent className="p-6 space-y-6">
+                <div className="text-xl font-semibold mb-4">Assistant Info</div>
+                <Input
+                  placeholder="Assistant Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Provider
-                    </label>
-                    <Select defaultValue="openai">
-                      <SelectTrigger className=" ">
+                    <label className="text-sm font-medium mb-2">Provider</label>
+                    <Select value={provider} onValueChange={setProvider}>
+                      <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className=" ">
-                        <SelectItem value="openai">
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 bg-primary-foreground rounded"></div>
-                            OpenAI
-                          </div>
-                        </SelectItem>
+                      <SelectContent>
+                        <SelectItem value="openai">OpenAI</SelectItem>
+                        <SelectItem value="groq">Groq</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-
                   <div>
-                    <label className="text-sm font-medium mb-2 flex items-center gap-2">
-                      Model
-                      <HelpCircle className="w-4 h-4 " />
-                    </label>
-                    <Select defaultValue="gpt4o">
-                      <SelectTrigger className=" ">
+                    <label className="text-sm font-medium mb-2">Model</label>
+                    <Select value={model} onValueChange={setModel}>
+                      <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className=" ">
-                        <SelectItem value="gpt4o">GPT 4o Cluster</SelectItem>
+                      <SelectContent>
+                        <SelectItem value="gpt4o">GPT 4o</SelectItem>
+                        <SelectItem value="mixtral">Mixtral</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
-                {/* First Message Mode */}
-                <div>
-                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
-                    First Message Mode
-                    <HelpCircle className="w-4 h-4 " />
-                  </label>
-                  <Select defaultValue="assistant-first">
-                    <SelectTrigger className=" ">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className=" ">
-                      <SelectItem value="assistant-first">
-                        Assistant speaks first
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2">
+                      Voice Provider
+                    </label>
+                    <Select
+                      value={voiceProvider}
+                      onValueChange={setVoiceProvider}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="deepgram">Deepgram</SelectItem>
+                        <SelectItem value="openai">OpenAI</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2">
+                      Voice Model
+                    </label>
+                    <Select value={voiceModel} onValueChange={setVoiceModel}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="asteria">Asteria</SelectItem>
+                        <SelectItem value="nova">Nova</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                {/* First Message */}
                 <div>
-                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <label className="text-sm font-medium mb-2">
                     First Message
-                    <HelpCircle className="w-4 h-4 " />
                   </label>
                   <Textarea
-                    defaultValue="Thank you for calling Wellness Partners. This is Riley, your scheduling assistant. How may I help you today?"
-                    className="   min-h-[80px]"
+                    value={firstMessage}
+                    onChange={(e) => setFirstMessage(e.target.value)}
+                    placeholder="e.g. Thank you for calling Wellness Partners..."
+                    className="min-h-[80px]"
                   />
                 </div>
 
-                {/* System Prompt */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      System Prompt
-                      <HelpCircle className="w-4 h-4 " />
-                    </label>
-                    <Button size="sm" className=" ">
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate
-                    </Button>
-                  </div>
-
-                  <div className="relative">
-                    <Textarea
-                      value={`# Appointment Scheduling Agent Prompt
-
-## Identity & Purpose
-
-You are Riley, an appointment scheduling voice assistant for Wellness Partners, a multi-specialty health clinic. Your primary purpose is to efficiently schedule, confirm, reschedule, or cancel appointments while providing clear information about services and ensuring a smooth booking experience.
-
-## Voice & Persona
-
-### Personality
-- Sound friendly, organized, and efficient
-- Project a helpful and patient demeanor, especially with elderly or confused callers
-- Maintain a warm but professional tone throughout the conversation`}
-                      className="   min-h-[300px] pr-10"
-                      readOnly
-                    />
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="absolute top-2 right-2  hover:text-white"
-                    >
-                      <Maximize2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card id="voice" className="mt-4">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Voice Provider</h2>
-                  <p className="text-blue-400">
-                    Configure the voice of the assistant.
-                  </p>
-                </div>
-                <ChevronUp className="w-5 h-5 " />
-              </div>
-
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Provider
-                    </label>
-                    <Select defaultValue="openai">
-                      <SelectTrigger className=" ">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className=" ">
-                        <SelectItem value="openai">
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 bg-primary-foreground rounded"></div>
-                            Deepgram
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium mb-2 flex items-center gap-2">
-                      Model
-                      <HelpCircle className="w-4 h-4 " />
-                    </label>
-                    <Select defaultValue="gpt4o">
-                      <SelectTrigger className=" ">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className=" ">
-                        <SelectItem value="gpt4o">Asteria</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card id="tools" className="mt-4">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Tools</h2>
-                  <p className="text-blue-400">
-                    Choose the tools that the assistant can use.
-                  </p>
-                </div>
-                <ChevronUp className="w-5 h-5 " />
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Select Tools
+                  <label className="text-sm font-medium mb-2">
+                    System Prompt
                   </label>
-                  <Select defaultValue="openai">
-                    <SelectTrigger className=" ">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className=" ">
-                      <SelectItem value="openai">
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 bg-primary-foreground rounded"></div>
-                          Tool 1
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Textarea
+                    value={systemPrompt}
+                    onChange={(e) => setSystemPrompt(e.target.value)}
+                    placeholder="e.g. You are Riley, a voice assistant for..."
+                    className="min-h-[200px]"
+                  />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card id="files" className="mt-4">
+              <CardContent className="p-6">
+                {!Filelink && (
+                  <>
+                    <h2 className="text-xl font-semibold mb-4">Upload File</h2>
+                    <FileUpload onChange={handleFileUpload} />
+                    {files.length > 0 && (
+                      <div className="mt-4">
+                        <h3 className="text-sm font-medium mb-2">
+                          Upload Files
+                        </h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          {files.map((file, index) => (
+                            <li key={index} className="flex items-center gap-2">
+                              <span className="truncate max-w-xs">
+                                {file.name}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                ({(file.size / 1024).toFixed(1)} KB)
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </>
+                )}
+                {Filelink && (
+                  <div className="mt-4">
+                    <h3 className="text-sm font-medium mb-2">Uploaded Files</h3>
+                    <a
+                      href={Filelink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-500 hover:underline"
+                    >
+                      Click to see file
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

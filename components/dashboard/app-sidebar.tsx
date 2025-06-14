@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react";
 import Image from "next/image";
 
@@ -16,13 +17,14 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "../documentation/nav-user";
+import { useAuth } from "@/contexts/AuthContext";
 
 // This is sample data.
 const data = {
   user: {
     name: "Kanishk Kumar",
     email: "kanishkkumar127@gmail.com",
-    avatar: "/images/UserProfile.png",
+    // avatar: "/images/UserProfile.png",
   },
   navMain: [
     {
@@ -70,6 +72,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader className="border-b">
@@ -118,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -1,11 +1,15 @@
+"use client";
 import { AnimatedGridPattern } from "@/components/animated-grid";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MoveUpRightIcon } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
+  const { user, loading } = useAuth();
+
   return (
     <div className="relative">
       <Header />
@@ -44,13 +48,21 @@ export default function Home() {
           It is designed to facilitate natural, informative, and customizable
           interactions.
         </p>
+        {!loading && user && (
+          <h2 className="text-2xl font-semibold text-blue-700 dark:text-blue-400 mb-4">
+            Welcome, {user.fullname || user.name || "User"}!
+          </h2>
+        )}
+
         <div className="mt-4 flex flex-wrap justify-center gap-6 z-10 ">
-          <Link href="/sign-in">
-            <Button className="px-5 py-5 text-lg flex items-center bg-blue-800 hover:bg-blue-900 text-white ">
-              Sign Up <ArrowRight className="ml-1" />
-            </Button>
-          </Link>
-          
+          {!user && (
+            <Link href="/sign-in">
+              <Button className="px-5 py-5 text-lg flex items-center bg-blue-800 hover:bg-blue-900 text-white ">
+                Sign Up <ArrowRight className="ml-1" />
+              </Button>
+            </Link>
+          )}
+
           <Link href="/docs">
             <Button
               variant="outline"
