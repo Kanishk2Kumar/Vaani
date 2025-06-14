@@ -41,13 +41,13 @@ const data = {
           isActive: true,
         },
         {
-          title: "Workflows",
-          url: "/dashboard/workflows",
+          title: "Analysis",
+          url: "/dashboard/analysis",
         },
-        {
-          title: "Files",
-          url: "/dashboard/files",
-        },
+        // {
+        //   title: "Files",
+        //   url: "/dashboard/files",
+        // },
         {
           title: "Tools",
           url: "/dashboard/tools",
