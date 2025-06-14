@@ -313,7 +313,7 @@ export default function Component() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="openai">OpenAI</SelectItem>
+                        {/* <SelectItem value="openai">OpenAI</SelectItem> */}
                         <SelectItem value="groq">Groq</SelectItem>
                       </SelectContent>
                     </Select>
@@ -329,6 +329,9 @@ export default function Component() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="llama3">LLaMA 3 </SelectItem>
+                        <SelectItem value="mixtral">Mixtral </SelectItem>
+                        <SelectItem value="gemma">Gemma </SelectItem>
                         <SelectItem value="gpt4o">GPT 4o</SelectItem>
                         <SelectItem value="mixtral">Mixtral</SelectItem>
                       </SelectContent>

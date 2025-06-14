@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import Image from "next/image";
 
@@ -41,8 +41,8 @@ const data = {
           isActive: true,
         },
         {
-          title: "Workflows",
-          url: "/dashboard/workflows",
+          title: "Analysis",
+          url: "/dashboard/analysis",
         },
         {
           title: "Tools",
@@ -117,9 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        {user ? <NavUser user={user}  /> : null}
-      </SidebarFooter>
+      <SidebarFooter>{user ? <NavUser user={user} /> : null}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
