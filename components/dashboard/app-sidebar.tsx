@@ -44,10 +44,6 @@ const data = {
           title: "Analysis",
           url: "/dashboard/analysis",
         },
-        // {
-        //   title: "Files",
-        //   url: "/dashboard/files",
-        // },
         {
           title: "Tools",
           url: "/dashboard/tools",
