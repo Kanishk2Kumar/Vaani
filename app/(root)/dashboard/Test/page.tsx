@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import supabase from "@/lib/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,7 +22,7 @@ export default function VoiceAssistantPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAssistant, setSelectedAssistant] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<any[]>([]);
-  const [sessionId] = useState("1"); // Using fixed session ID for simplicity
+  const [sessionId] = useState("1"); 
   const { user } = useAuth();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
