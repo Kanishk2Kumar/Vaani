@@ -26,8 +26,8 @@ export default function Component() {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [provider, setProvider] = useState("openai");
-  const [model, setModel] = useState("gpt4o");
+  const [provider, setProvider] = useState("groq");
+  const [model, setModel] = useState("meta-llama/llama-4-scout-17b-16e-instruct");
   const [voiceProvider, setVoiceProvider] = useState("deepgram");
   const [voiceModel, setVoiceModel] = useState("asteria");
   const [firstMessage, setFirstMessage] = useState("");
@@ -44,29 +44,36 @@ export default function Component() {
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   useEffect(() => {
-    const fetchAssistants = async () => {
-      if (!user?.userid) return;
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/assistants/${user.userid}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch assistants");
-        const data = await response.json();
-
-        if (data && data.assistants && Array.isArray(data.assistants)) {
-          setAssistants(data.assistants);
-        } else {
-          console.error("Unexpected response structure:", data);
-          setAssistants([]);
+  const fetchAssistants = async () => {
+    if (!user?.userid) return;
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/assistants/${user.userid}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      } catch (error) {
-        console.error("Error fetching assistants:", error);
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+
+      if (data && data.assistants && Array.isArray(data.assistants)) {
+        setAssistants(data.assistants);
+      } else {
+        console.error("Unexpected response structure:", data);
         setAssistants([]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching assistants:", error);
+      setAssistants([]);
+    }
+  };
 
-    fetchAssistants();
-  }, [user]);
+  fetchAssistants();
+}, [user, API_BASE_URL]);  // Add API_BASE_URL to dependencies
 
   const handleFileUpload = (selectedFiles: File[]) => {
     setFiles(selectedFiles);
@@ -145,9 +152,9 @@ export default function Component() {
       // Reset form
       setShowCreateForm(false);
       setName("");
-      setModel("gpt4o");
-      setProvider("openai");
-      setVoiceProvider("deepgram");
+      setModel("groq");
+      setProvider("groq");
+      setVoiceProvider("mistral");
       setVoiceModel("asteria");
       setFirstMessage("");
       setSystemPrompt("");
@@ -198,8 +205,8 @@ export default function Component() {
             className="w-full"
             onClick={() => {
               setName("");
-              setProvider("openai");
-              setModel("gpt4o");
+              setProvider("groq");
+              setModel("meta-llama/llama-4-scout-17b-16e-instruct");
               setVoiceProvider("deepgram");
               setVoiceModel("asteria");
               setFirstMessage("");
@@ -313,7 +320,7 @@ export default function Component() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* <SelectItem value="openai">OpenAI</SelectItem> */}
+                        {/* <SelectItem value="groq">groq</SelectItem> */}
                         <SelectItem value="groq">Groq</SelectItem>
                       </SelectContent>
                     </Select>
@@ -329,11 +336,9 @@ export default function Component() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="llama3">LLaMA 3 </SelectItem>
-                        <SelectItem value="mixtral">Mixtral </SelectItem>
-                        <SelectItem value="gemma">Gemma </SelectItem>
-                        <SelectItem value="gpt4o">GPT 4o</SelectItem>
-                        <SelectItem value="mixtral">Mixtral</SelectItem>
+                        <SelectItem value="llama-3.1-8b-instant">llama-3.1-8b-instant </SelectItem>
+                        <SelectItem value="gemma2-9b-it">gemma2-9b-it </SelectItem>
+                        <SelectItem value="llama-4-scout-17b-16e-instruct">llama-4-scout-17b-16e-instruct</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -354,7 +359,7 @@ export default function Component() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="deepgram">Deepgram</SelectItem>
-                        <SelectItem value="openai">OpenAI</SelectItem>
+                        <SelectItem value="groq">groq</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -372,7 +377,7 @@ export default function Component() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="asteria">Asteria</SelectItem>
-                        <SelectItem value="nova">Nova</SelectItem>
+                        <SelectItem value="whisper-large-v3-turbo">whisper-large-v3-turbo</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

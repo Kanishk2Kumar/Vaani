@@ -45,8 +45,8 @@ const data = {
           url: "/dashboard/analysis",
         },
         {
-          title: "Tools",
-          url: "/dashboard/tools",
+          title: "Test",
+          url: "/dashboard/Test",
         },
       ],
     },
