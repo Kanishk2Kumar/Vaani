@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🗣️ Vaani – Voice-First Conversational AI for Finance
 
-## Getting Started
+**Vaani** is an intelligent, voice-first conversational assistant built for seamless and empathetic user interactions in financial domains like **peer-to-peer lending**. It is optimized for accessibility, efficiency, and plug-and-play integration, particularly for platforms like **LenDenClub**.
 
-First, run the development server:
+![Screenshot 2025-06-10 010623](https://github.com/user-attachments/assets/08a22eeb-7234-40db-a703-76abf85993b5)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📌 Project Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Project Title**: Vaani  
+- **Domain**: Conversational AI / Finance  
+- **Use Case**: Creating Conversational Intelligence  
+- **Team Name**: Team Optimus  
+- **Demo Video**: [YouTube Presentation](https://youtu.be/pHlwq9Qp7Tc)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ❗ Problem Understanding & Scope
 
-## Learn More
+The challenge is to create **voice-first interactions** that feel natural, informative, and customizable for a financial services platform. The system should:
 
-To learn more about Next.js, take a look at the following resources:
+- Assist users with limited digital literacy  
+- Help first-time borrowers understand loan offerings  
+- Reduce support workload with fast, AI-driven assistance  
+- Be easily adaptable across use cases (support, sales, etc.)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 👥 Target Users
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Individuals in Tier 2 & Tier 3 cities  
+- First-time loan seekers  
+- Repeat users needing quick, human-free support  
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧩 Key Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 🧠 **Intelligent Voice Response (IVR)**: Multilevel, customizable IVR for call routing  
+- 📊 **Real-Time Analytics**: Dashboards for insights on interaction trends  
+- 🔌 **Plug-and-Play Mechanism**: Simple API integration for business teams  
+- 🔁 **Customizable Workflows**: Business teams can modify assistant flows  
+- 🗣️ **Empathetic Communication**: Emotion-aware voice interactions  
+- 🔄 **Interrupt Handling**: Recognizes "stop", "hold on", etc., mid-conversation
+
+
+## 🗂️ Use Cases
+
+- 📞 Automated Customer Support  
+- 📅 Appointment Scheduling  
+- 📣 Sales & Promotions  
+- 🔗 CRM System Integration  
+
+## Technical Architecture:
+
+![Vaani_TechincalArchitecture](https://github.com/user-attachments/assets/e08c9b8d-dfb7-4111-a0a0-b8f2849033ac)
+
+
+## 🧠 Conversation Design (Layered Pipeline)
+
+![Vaani](https://github.com/user-attachments/assets/69ba2398-802b-42a5-87d4-05ee2246b09a)
+
+
+### 🧾 Transcription Layer
+- **Background Voice Filtering**: Ignores ambient noise or background chatter
+
+### 🧭 Orchestration Layer
+- **End Point Detection**: Detects when the user finishes speaking  
+- **Interruption Model**: Supports commands like “stop”, “wait”, etc.
+
+### 💬 Output Layer
+- **LLM with RAG**: Retrieves answers using file uploads and vector search  
+- **User Context**: Personalized responses based on query history
+
+## CI/CD Pipeline & Deployment Summary
+![ProjectStructure](https://github.com/user-attachments/assets/d2576178-b995-4528-a857-abb0b13627cb)
