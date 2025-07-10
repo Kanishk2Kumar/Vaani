@@ -28,8 +28,8 @@ export default function Component() {
   const [name, setName] = useState("");
   const [provider, setProvider] = useState("groq");
   const [model, setModel] = useState("meta-llama/llama-4-scout-17b-16e-instruct");
-  const [voiceProvider, setVoiceProvider] = useState("deepgram");
-  const [voiceModel, setVoiceModel] = useState("asteria");
+  const [voiceProvider, setVoiceProvider] = useState("groq");
+  const [voiceModel, setVoiceModel] = useState("whisper-large-v3-turbo");
   const [firstMessage, setFirstMessage] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
 
@@ -155,7 +155,7 @@ export default function Component() {
       setModel("groq");
       setProvider("groq");
       setVoiceProvider("mistral");
-      setVoiceModel("asteria");
+      setVoiceModel("whisper-large-v3-turbo");
       setFirstMessage("");
       setSystemPrompt("");
       setFiles([]);
@@ -207,8 +207,8 @@ export default function Component() {
               setName("");
               setProvider("groq");
               setModel("meta-llama/llama-4-scout-17b-16e-instruct");
-              setVoiceProvider("deepgram");
-              setVoiceModel("asteria");
+              setVoiceProvider("groq");
+              setVoiceModel("whisper-large-v3-turbo");
               setFirstMessage("");
               setSystemPrompt("");
               setFiles([]);
@@ -337,7 +337,6 @@ export default function Component() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="llama-3.1-8b-instant">llama-3.1-8b-instant </SelectItem>
-                        <SelectItem value="gemma2-9b-it">gemma2-9b-it </SelectItem>
                         <SelectItem value="llama-4-scout-17b-16e-instruct">llama-4-scout-17b-16e-instruct</SelectItem>
                       </SelectContent>
                     </Select>
@@ -358,7 +357,6 @@ export default function Component() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="deepgram">Deepgram</SelectItem>
                         <SelectItem value="groq">groq</SelectItem>
                       </SelectContent>
                     </Select>
@@ -376,7 +374,7 @@ export default function Component() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="asteria">Asteria</SelectItem>
+                        <SelectItem value="whisper-large-v3">whisper-large-v3</SelectItem>
                         <SelectItem value="whisper-large-v3-turbo">whisper-large-v3-turbo</SelectItem>
                       </SelectContent>
                     </Select>

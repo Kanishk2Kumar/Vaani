@@ -29,7 +29,7 @@ const Header = () => {
 
           <ModeToggle />
 
-          <Link href="/dashboard" target="_blank" rel="noopener noreferrer">
+          <Link href="/dashboard/assistants" target="_blank" rel="noopener noreferrer">
             <Button className="px-5 py-4 text-lg flex items-center bg-blue-800 hover:bg-blue-900 text-white ">
             Open Dashboard 
           </Button>

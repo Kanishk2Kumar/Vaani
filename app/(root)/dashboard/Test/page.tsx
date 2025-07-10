@@ -251,7 +251,7 @@ export default function VoiceAssistantPage() {
         </div>
 
         {/* Audio recorder */}
-        <div className="p-6 border-t">
+        <div className="p-6 border-t max-h-[30rem]">
           <div className="">
                 <h1 className="text-xl font-semibold mb-4">🎙️ Audio Recorder</h1>
 
