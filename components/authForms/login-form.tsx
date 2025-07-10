@@ -42,12 +42,7 @@ export function LoginForm({
         .single();
 
       if (data) {
-        router.replace("/");
-        return;
-      }
-
-      if (data?.userType === "ADMIN") {
-        router.replace("/admin/dashboard");
+        router.replace("/dashboard/assistants");
         return;
       }
 

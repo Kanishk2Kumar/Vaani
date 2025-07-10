@@ -58,7 +58,7 @@ export function SignInUserForm({
     });
 
     setLoading(false);
-    router.push("/");
+    router.push("/dashboard/assistants");
   };
 
   return (
