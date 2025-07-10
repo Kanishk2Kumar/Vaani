@@ -137,9 +137,6 @@ export default function Component() {
         );
       }
 
-      // Success case
-      console.log("Assistant created:", responseData);
-
       // Refresh the list
       const refreshResponse = await fetch(
         `${API_BASE_URL}/assistants/${user.userid}`
@@ -193,6 +190,9 @@ export default function Component() {
   };
   const connectionLink = selectedAssistant
     ? `${API_BASE_URL}/chat/${selectedAssistant.assistant_id}/${sessionId}`
+    : null;
+  const Voice_connectionLink = selectedAssistant
+    ? `${API_BASE_URL}/voice-chat/${selectedAssistant.assistant_id}/${sessionId}`
     : null;
   return (
     <div className="flex h-screen">
@@ -441,6 +441,11 @@ export default function Component() {
                   <div className="bg-gray-100 p-4 rounded text-sm font-mono break-all">
                     <h3 className="text-lg font-semibold">Chat Connect Link</h3>
                     {connectionLink ||
+                      "Select an assistant to get the connection link."}
+                  </div>
+                  <div className="bg-gray-100 p-4 rounded text-sm font-mono break-all">
+                    <h3 className="text-lg font-semibold">Voice Connect Link</h3>
+                    {Voice_connectionLink ||
                       "Select an assistant to get the connection link."}
                   </div>
                 </div>
