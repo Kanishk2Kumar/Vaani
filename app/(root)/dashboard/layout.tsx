@@ -46,12 +46,6 @@ const Layout = ({children}: {children: ReactNode}) => {
         {children}
         </SidebarInset>
     </SidebarProvider>
-    <div className="fixed bottom-6 right-6">
-          <Button className="  rounded-full px-4 py-2">
-            <LifeBuoy className="w-4 h-4" />
-            Ask AI
-          </Button>
-      </div>
     </main>
   )
 }

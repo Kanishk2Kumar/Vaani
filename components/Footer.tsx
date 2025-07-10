@@ -23,7 +23,7 @@ export default function Footer() {
 
         <div className="gap-4 hidden md:flex">
           <FooterButtons />
-          <Link href="https://github.com/Kanishk2Kumar/SwastaSetu">
+          <Link href="https://github.com/Kanishk2Kumar/Vaani">
           <Image src="/icons/Github.svg" alt="Github Logo" height={30} width={30} className="mt-1" />
           </Link>
         </div>
