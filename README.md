@@ -2,6 +2,8 @@
 
 **Vaani** is an intelligent, voice-first conversational assistant built for seamless and empathetic user interactions in financial domains like **peer-to-peer lending**. It is optimized for accessibility, efficiency, and plug-and-play integration, particularly for platforms like **LenDenClub**.
 
+🚀 This project showcases how voice-first conversational AI can bridge the gap for users with limited digital literacy, especially in financial services. By combining empathetic communication, real-time analytics, and seamless integration, Vaani empowers both users and businesses with accessible, intelligent, and scalable support solutions.
+
 ![Screenshot 2025-06-10 010623](https://github.com/user-attachments/assets/08a22eeb-7234-40db-a703-76abf85993b5)
 
 ## 📌 Project Overview
