@@ -12,7 +12,7 @@
 - **Domain**: Conversational AI / Finance  
 - **Use Case**: Creating Conversational Intelligence  
 - **Team Name**: Team Optimus  
-- **Demo Video**: [YouTube Presentation](https://youtu.be/pHlwq9Qp7Tc)
+- **Demo Video**: [YouTube Presentation](https://www.youtube.com/watch?v=pykrJGBJsqM)
 
 
 ## ❗ Problem Understanding & Scope
@@ -71,3 +71,6 @@ The challenge is to create **voice-first interactions** that feel natural, infor
 
 ## CI/CD Pipeline & Deployment Summary
 ![ProjectStructure](https://github.com/user-attachments/assets/d2576178-b995-4528-a857-abb0b13627cb)
+
+
+Backend Repo LINK: https://github.com/Kanishk2Kumar/Vaani-Backend
